@@ -23,6 +23,11 @@ body {
     width: 100%;
 }
 
+/* Aloca o conteudo completo dentro da area de exibição da tag */
+.overflow-wrap  {
+    overflow-wrap: break-word; 
+}
+
 /* QR code generator */
 #qrCode {
     margin: 15px;
