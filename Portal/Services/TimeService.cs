@@ -1,5 +1,6 @@
 ﻿using Portal.Models.DTOs;
 using Portal.Services.Interfaces;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -17,27 +18,36 @@ namespace Portal.Services
         //Metodo criado para lidar com o request na timeApi
         public async Task<TimeResponseDTO> GetDateTime()
         {
-            var httpClient = _httpClient.CreateClient();
+            TimeResponseDTO response = null;
 
-            var result = await httpClient.GetAsync(Program.API_ADDRESS);
-            if (result.IsSuccessStatusCode)
+            try
             {
-                //Atribui data no formato desejado
-                string date = await result.Content.ReadAsStringAsync();
-                
-                TimeResponseDTO response = new TimeResponseDTO()
-                {
-                    // Atribui data formatada.
-                    Date = date,
+                var httpClient = _httpClient.CreateClient();
 
-                    // Converte retorno para DateTime e extrai Day
-                    Day = int.Parse(date.Split(',')[1].Split(' ')[1].ToString())
-                };
+                var result = await httpClient.GetAsync(Program.API_ADDRESS);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    //Atribui data no formato desejado
+                    var date = await result.Content.ReadAsStringAsync();
+
+                    response = new TimeResponseDTO()
+                    {
+                        // Atribui data formatada.
+                        Date = date,
+
+                        // Converte retorno para DateTime e extrai Day
+                        Day = int.Parse(date.Split(',')[1].Split(' ')[1].ToString())
+                    };
+                }
 
                 return response;
             }
-
-            return null;
+            catch(Exception ex)
+            {
+                Console.WriteLine($"{Messages.TIME_API_EXCEPTION}\n{ex.Message}");
+                return response;
+            }
         }
     }
 }
